@@ -1,0 +1,306 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Test {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #555;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+      <div class="d-block mb-4 mb-md-0">
+          
+          <h2 class="h4">Hyperparameter Tuning</h2>
+          <p class="mb-0">Tweak how the model learns to optimize its performance.</p>
+      </div>
+      
+  </div>
+
+    
+  
+  
+  <div class="card card-body border-0 shadow table-wrapper table-responsive">
+    
+    <div id="selectDataset" class="mb-4">
+        <h4>How do models fit data?</h4>
+        <p>Most machine learning algorithms fit data by minizming a <i>loss function</i>. Mathematically, that means finding the parameters that will produce the least error, but we can think of it as getting a boulder to the bottom of a valley.</p>
+        <p>Choose a dataset at the bottom of the page to use for the following exercises.</p>
+        <ul>
+            <il>
+                Solubility
+                <ul>
+                    <il>Model and predict the ability of substances to dissolve in water, a significant property for the generation new drugs.</il>
+                </ul>
+            </il>
+            <il>
+                Hydration Energy
+                <ul>
+                    <il>Model and predict . This is useful for determining d.</il>
+                </ul>
+            </il>
+            <il>
+                Lipophilicity
+                <ul>
+                    <il>Model and predict the types of substances that can dissolve in fats, oils, and other non-polar substances. This is useful for finding drugs that can cross the cell membrane.</il>
+                </ul>
+            </il>
+            <il>
+                HIV
+                <ul>
+                    <il>Model and predict the types of drugs that can prevent HIV replication. This could potentially lead to the discovery of new drugs targeting HIV.</il>
+                </ul>
+            </il>
+            <il>
+                Blood-Brain-Barrier Penetration
+                <ul>
+                    <il>Model and predict the types of substances that can cross the blood-brain barrier, which blocks most drugs and hormones. This can help find drugs that affect the central nervous system.</il>
+                </ul>
+            </il>
+        </ul>
+
+        <label class="my-1 me-2" for="selectDatasetField">Click to choose a dataset</label>
+        <select class="form-select" id="selectDatasetField" aria-label="Select dataset">
+            <option selected value="delaney">Solubility (default)</option>
+            <option value="freesolv">Hydration Energy</option>
+            <option value="lipo">Lipophilicity</option>
+            <option value="hiv">HIV</option>
+            <option value="bbbp">Blood-Brain-Barrier Penetration</option>
+        </select>
+    </div>
+
+    <div id="selectLR" class="mb-4" style="display:none;">
+        <h4>Learning Rate</h4>
+        <p>We can control the speed of the boulder going down the hill. If it tumbles too quickly, it will bounce up to the other side. If it travels too slowly, it will take a long time to reach the bottom. This speed is controlled by a hyperparameter called <i>learning rate</i>.</p>
+        <p>Experiment with different learning rates and click the button to see which gives you the best performance—the closer the score is to 1, the better.</p>
+        <img src="https://i.stack.imgur.com/KszUC.png">
+        <input type="range" name="amountRange" id="LRslider" min="0" max="0.1" step=0.001 value="0" onchange="this.nextElementSibling.value=this.value" />
+		<!--disallow typing in below input-->
+        <input type="number" name="amountInput" id="LRtext" min="0" max="0.1" step=0.001 value="0" onchange="this.previousElementSibling.value=this.value" />
+        <button class="btn btn-primary" id="trainButtonLR" type="button">Train</button>
+        <div class="loader" id="LRLoader" style="display: none;"></div>
+        <p style="display: none;" id="showScoreLR">Score: </p> 
+    </div>
+
+    <div id="selectDropout" class="mb-4" style="display:none;">
+        <h4>Dropout</h4>
+        <p>Although forgetting your keys can be a nuisance, forgetting things in general is very useful—imagine if you had to picture every place you'd ever parked while trying to find your car in a parking lot! Likewise, ML models benefit from forgetting connections they've made by getting rid of unnecessary learned information. This hyperparameter, the number of units of information discarded, is known as <i>dropout</i>.</p>
+        <p>Experiment with different dropout values and click the button to see which gives you the best performance—the closer the score is to 1, the better.</p>
+        <!--talk about overfitting? or regularization?-->
+        <input type="range" name="amountRange" id="dropoutSlider" min="0" max="0.5" step=0.01 value="0" onchange="this.nextElementSibling.value=this.value" />
+		<input type="number" name="amountInput" id="dropoutText" min="0" max="0.5" step=0.01 value="0" onchange="this.previousElementSibling.value=this.value" />
+        <button class="btn btn-primary" id="trainButtonDropout" type="button">Train</button>
+        <div class="loader" id="dropoutLoader" style="display: none;"></div>
+        <p style="display: none;" id="showScoreDropout">Score: </p> 
+    </div>
+
+
+      <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+          <nav aria-label="Page navigation example">
+              <ul class="pagination mb-0">
+                  <li class="page-item">
+                      <a id="prev" class="page-link" href="#">Previous</a>
+                  </li>
+                  <li id="pg1" class="page-item active">
+                      <a class="page-link" href="#">1</a>
+                  </li>
+                  <li id="pg2" class="page-item">
+                      <a class="page-link" href="#">2</a>
+                  </li>
+                  <li id="pg3" class="page-item">
+                      <a class="page-link" href="#">3</a>
+                  </li>
+                  <li id="pg4" class="page-item">
+                      <a class="page-link" href="#">4</a>
+                  </li>
+                  <li id="pg5" class="page-item">
+                      <a class="page-link" href="#">5</a>
+                  </li>
+                  <li class="page-item">
+                      <a id="next" class="page-link" href="#">Next</a>
+                  </li>
+              </ul>
+          </nav>
+      </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+
+$(document).ready(function() {
+let learningRate = parseFloat($("#LRslider").val());
+let dataset = "delaney";
+let split = "scaffold";
+let dropout = parseFloat($("#dropoutSlider").val());
+let pageNum = 1;
+
+//find out how to disable buttons on the css side
+
+$("#pg1").click(() => {
+    $("#pg2").removeClass("active");
+    $("#pg3").removeClass("active");
+    $("#pg4").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectLR").hide();
+    $("#selectDropout").hide();
+    $("#selectDataset").show();
+    pageNum = 1;
+    $("#pg1").addClass("active");
+});
+
+$("#pg2").click(() => {
+    $("#pg1").removeClass("active");
+    $("#pg3").removeClass("active");
+    $("#pg4").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectDropout").hide();
+    $("#selectDataset").hide();
+    $("#selectLR").show();
+    pageNum = 2;
+    $("#pg2").addClass("active");
+});
+
+$("#pg3").click(() => {
+    $("#pg1").removeClass("active");
+    $("#pg2").removeClass("active");
+    $("#pg4").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectDataset").hide();
+    $("#selectLR").hide();
+    $("#selectDropout").show();
+    pageNum = 3;
+    $("#pg3").addClass("active");
+});
+
+$("#next").click(() => {
+    switch (pageNum) {
+        case 1:
+            $("#pg1").removeClass("active");
+            $("#selectDataset").hide();
+            $("#selectDropout").hide();
+            $("#selectLR").show();
+            pageNum = 2;
+            $("#pg2").addClass("active");
+            break;
+
+        case 2:
+            $("#pg2").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDataset").hide();
+            $("#selectDropout").show();
+            pageNum = 3;
+            $("#pg3").addClass("active");
+            break;
+    
+        default:
+            $("#pg2").removeClass("active");
+            $("#pg3").removeClass("active");
+            $("#pg4").removeClass("active");
+            $("#pg5").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDropout").hide();
+            $("#selectDataset").show();
+            pageNum = 1;
+            $("#pg1").addClass("active");
+            break;
+    }
+});
+
+$("#prev").click(() => {
+    switch (pageNum) {
+        case 2:
+            $("#pg2").removeClass("active");
+            $("#selectDropout").hide();
+            $("#selectLR").hide();
+            $("#selectDataset").show();
+            pageNum = 1;
+            $("#pg1").addClass("active");
+            break;
+
+        case 3:
+            $("#pg3").removeClass("active");
+            $("#selectDataset").hide();
+            $("#selectDropout").hide();
+            $("#selectLR").show();
+            pageNum = 2;
+            $("#pg2").addClass("active");
+            break;
+    
+        default:
+            $("#pg2").removeClass("active");
+            $("#pg3").removeClass("active");
+            $("#pg4").removeClass("active");
+            $("#pg5").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDropout").hide();
+            $("#selectDataset").show();
+            pageNum = 1;
+            $("#pg1").addClass("active");
+            break;
+    }
+});
+
+$("#selectDatasetField").change(() => {
+    dataset = $(this).val();
+})
+
+$("#trainButtonLR").click(() => {
+    $("#LRLoader").css('display', 'inline-block');
+    $.get("/train", 
+    {
+        dataset: dataset,
+        split: split,
+    }, (data) => {
+        let score = data['score'];
+        $("#LRLoader").hide();
+        $("#showScoreLR").text("Score: " + score);
+        $("#showScoreLR").show();
+    });
+});
+
+$("#trainButtonDropout").click(() => {
+    $("#dropoutLoader").css('display', 'inline-block');
+    $.get("/train", 
+    {
+        dataset: dataset,
+        split: split,
+        dropout: dropout
+    }, (data) => {
+        let score = data['score'];
+        $("#dropoutLoader").hide();
+        $("#showScoreDropout").text("Score: " + score);
+        $("#showScoreDropout").show();
+    });
+});
+
+
+});
+
+</script>
+{% endblock javascripts %}
