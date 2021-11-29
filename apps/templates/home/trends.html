@@ -1,0 +1,342 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Test {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #555;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+      <div class="d-block mb-4 mb-md-0">
+          
+          <h2 class="h4">Chemical Trends</h2>
+          <p class="mb-0">Make predictions based on chemical data.</p>
+      </div>
+      
+  </div>
+
+    
+  
+  
+  <div class="card card-body border-0 shadow table-wrapper table-responsive">
+    
+    <div id="selectDataset" class="mb-4">
+        <h4>How can we predict chemical properties?</h4>
+        <p>The simplest way to make predictions is to plot data about a given property and use a line/curve of best fit, one that follows the general shape of the data points.</p>
+        <p>For example, view the below relationship. An alkane is a molecule with only hydrogen and carbon atoms (a hydrocarbon) containing only single bonds in a tree-like structure. Certain alkanes are used in gasoline, and it is important that they remain in liquid form--the temperature should not exceed their boiling point.</p>
+        <img src="https://www.softschools.com/chemistry/organic_chemistry/images/alkane_structure_and_bonding_1.png">
+        <p>Say you are the head of a gasoline manufacturing plant concerned about whether your fuel will remain effective in tropical countries. Without any chemistry knowledge, you can examine potential relationships to predict the boiling points of alkanes in your gasoline.</p>
+        
+    </div>
+
+    <div id="selectLR" class="mb-4" style="display:none;">
+        <h4>Experiment with Properties</h4>
+        <p>We will be using data about alkanes from <u><a href="https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html">https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html</a></u></p>
+        <p>As the manager, you have access to various properties about different types of alkanes:</p>
+        <ul>
+            <il># Carbon Atoms</il>
+            <il># Hydrogen Atoms</il>
+            <il>Molecular Weight</il>
+            <il>Density</il>
+        </ul>
+        <p>However, you notice that you are missing boiling point data about certain alkanes. Your task is to use the rest of the data to estimate the missing information.</p>
+        <div>
+            <canvas id="trends"></canvas>
+        </div>
+        <label class="my-1 me-2" for="selectDatasetField">Choose a different x-axis</label>
+        <select class="form-select" id="selectDatasetField" aria-label="Select dataset">
+            <option selected value="numC">Number of Carbon Atoms</option>
+            <option value="numH">Number of Hydrogen Atoms</option>
+            <option value="molWeight">Molecular Weight</option>
+            <option value="density">Density</option>
+        </select>
+    </div>
+
+    <div id="selectDropout" class="mb-4" style="display:none;">
+        <h4>Regression</h4>
+        <p>From here, we can use a computer to generate a curve of best fit. This is known as regression and will allow you to fill in missing values that best fit all of the data.</p>
+        <p></p>
+        
+    </div>
+
+
+      <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+          <nav aria-label="Page navigation example">
+              <ul class="pagination mb-0">
+                  <li class="page-item">
+                      <a id="prev" class="page-link" href="#">Previous</a>
+                  </li>
+                  <li id="pg1" class="page-item active">
+                      <a class="page-link" href="#">1</a>
+                  </li>
+                  <li id="pg2" class="page-item">
+                      <a class="page-link" href="#">2</a>
+                  </li>
+                  <li id="pg3" class="page-item">
+                      <a class="page-link" href="#">3</a>
+                  </li>
+                  <li id="pg4" class="page-item">
+                      <a class="page-link" href="#">4</a>
+                  </li>
+                  <li id="pg5" class="page-item">
+                      <a class="page-link" href="#">5</a>
+                  </li>
+                  <li class="page-item">
+                      <a id="next" class="page-link" href="#">Next</a>
+                  </li>
+              </ul>
+          </nav>
+      </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
+<script>
+
+$(document).ready(function() {
+let learningRate = parseFloat($("#LRslider").val());
+let dataset = "delaney";
+let split = "scaffold";
+let dropout = parseFloat($("#dropoutSlider").val());
+let pageNum = 1;
+
+//find out how to disable buttons on the css side
+
+$("#pg1").click(() => {
+    $("#pg2").removeClass("active");
+    $("#pg3").removeClass("active");
+    $("#pg4").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectLR").hide();
+    $("#selectDropout").hide();
+    $("#selectDataset").show();
+    pageNum = 1;
+    $("#pg1").addClass("active");
+});
+
+$("#pg2").click(() => {
+    $("#pg1").removeClass("active");
+    $("#pg3").removeClass("active");
+    $("#pg4").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectDropout").hide();
+    $("#selectDataset").hide();
+    $("#selectLR").show();
+    pageNum = 2;
+    $("#pg2").addClass("active");
+});
+
+$("#pg3").click(() => {
+    $("#pg1").removeClass("active");
+    $("#pg2").removeClass("active");
+    $("#pg4").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectDataset").hide();
+    $("#selectLR").hide();
+    $("#selectDropout").show();
+    pageNum = 3;
+    $("#pg3").addClass("active");
+});
+
+$("#next").click(() => {
+    switch (pageNum) {
+        case 1:
+            $("#pg1").removeClass("active");
+            $("#selectDataset").hide();
+            $("#selectDropout").hide();
+            $("#selectLR").show();
+            pageNum = 2;
+            $("#pg2").addClass("active");
+            break;
+
+        case 2:
+            $("#pg2").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDataset").hide();
+            $("#selectDropout").show();
+            pageNum = 3;
+            $("#pg3").addClass("active");
+            break;
+    
+        default:
+            $("#pg2").removeClass("active");
+            $("#pg3").removeClass("active");
+            $("#pg4").removeClass("active");
+            $("#pg5").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDropout").hide();
+            $("#selectDataset").show();
+            pageNum = 1;
+            $("#pg1").addClass("active");
+            break;
+    }
+});
+
+$("#prev").click(() => {
+    switch (pageNum) {
+        case 2:
+            $("#pg2").removeClass("active");
+            $("#selectDropout").hide();
+            $("#selectLR").hide();
+            $("#selectDataset").show();
+            pageNum = 1;
+            $("#pg1").addClass("active");
+            break;
+
+        case 3:
+            $("#pg3").removeClass("active");
+            $("#selectDataset").hide();
+            $("#selectDropout").hide();
+            $("#selectLR").show();
+            pageNum = 2;
+            $("#pg2").addClass("active");
+            break;
+    
+        default:
+            $("#pg2").removeClass("active");
+            $("#pg3").removeClass("active");
+            $("#pg4").removeClass("active");
+            $("#pg5").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDropout").hide();
+            $("#selectDataset").show();
+            pageNum = 1;
+            $("#pg1").addClass("active");
+            break;
+    }
+});
+
+$("#selectDatasetField").change(() => {
+    dataset = $(this).val();
+})
+
+$("#trainButtonLR").click(() => {
+    $("#LRLoader").css('display', 'inline-block');
+    $.get("/train", 
+    {
+        dataset: dataset,
+        split: split,
+    }, (data) => {
+        let score = data['score'];
+        $("#LRLoader").hide();
+        $("#showScoreLR").text("Score: " + score);
+        $("#showScoreLR").show();
+    });
+});
+
+$("#trainButtonDropout").click(() => {
+    $("#dropoutLoader").css('display', 'inline-block');
+    $.get("/train", 
+    {
+        dataset: dataset,
+        split: split,
+        dropout: dropout
+    }, (data) => {
+        let score = data['score'];
+        $("#dropoutLoader").hide();
+        $("#showScoreDropout").text("Score: " + score);
+        $("#showScoreDropout").show();
+    });
+});
+
+const numCarbon = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+const numHydrogen = [4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42];
+const molWeight = [16.04,30.07,44.09,58.12,72.15,86.17,100.2,114.22,128.25,142.28,156.3,170.33,184.35,198.38,212.41,226.43,240.46,254.48,268.51,282.54];
+const boilPoint = [-162,-89,-42,-1,36,69,98,126,151,174,196,216,235,254,270,287,303,316,330,344];
+const density = [0, 0, 0.498,0.577,0.63,0.664,0.683,0.702,0.719,0.73,0.74,0.75,0.756,0.76,0.769,0.773,0.778,0.77728,0.785,0.789];
+
+$("#selectDatasetField").change(() => {
+    switch (document.getElementById("selectDatasetField").value) {
+        case "numC":
+            newAxis(numCarbon);
+            break;
+        case "numH":
+            newAxis(numHydrogen);
+            break;
+        case "molWeight":
+            newAxis(molWeight);
+            break;
+        case "density":
+            newAxis(density);
+            break;
+        default:
+            newAxis(numCarbon);
+            break;
+    }
+})
+
+let defaultData = [];
+for(let i = 0; i < numCarbon.length; i++) {
+    defaultData.push({
+        x: numCarbon[i],
+        y: boilPoint[i]
+    });
+}
+
+const alkaneData = {
+  datasets: [{
+    label: 'Alkanes',
+    data: defaultData,
+    backgroundColor: 'rgb(255, 99, 132)'
+  }],
+};
+
+const config = {
+  type: 'line',
+  data: alkaneData,
+  options: {
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom'
+      }
+    }
+  }
+};
+
+function newAxis(xArray) {
+    for(let i = 0; i < alkaneData.datasets[0].data.length; i++) {
+        alkaneData.datasets[0].data[i].x = xArray[i];
+    }
+
+    myChart.update();
+}
+
+const myChart = new Chart(
+    document.getElementById('trends'),
+    config
+);
+
+});
+
+</script>
+{% endblock javascripts %}
