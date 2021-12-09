@@ -3,7 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-from flask_wtf import FlaskForm
+""" from flask_wtf import FlaskForm
 from wtforms import TextField, PasswordField
 from wtforms.validators import Email, DataRequired
 
@@ -29,3 +29,4 @@ class CreateAccountForm(FlaskForm):
     password = PasswordField('Password',
                              id='pwd_create',
                              validators=[DataRequired()])
+ """
