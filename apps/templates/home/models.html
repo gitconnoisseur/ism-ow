@@ -30,28 +30,22 @@
 
 {% block content %}
 
-
+<!--idea is to walk the user through the process of modeling quantities at their job--stick with one scenario-->
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
       <div class="d-block mb-4 mb-md-0">
           
-          <h2 class="h4">Chemical Trends</h2>
-          <p class="mb-0">Make predictions based on chemical data.</p>
+          <h2 class="h4">Model Building</h2>
+          <p class="mb-0">Use machine learning methods for property prediction.</p>
       </div>
       
   </div>
-
-    
-  
+ 
   
   <div class="card card-body border-0 shadow table-wrapper table-responsive">
-    
     <div id="selectDataset" class="mb-4">
-        <h4>How can we predict chemical properties?</h4>
-        <p>The simplest way to make predictions is to plot data about a given property and use a line/curve of best fit, one that follows the general shape of the data points.</p>
-        <p>For example, view the below relationship. An alkane is a molecule with only hydrogen and carbon atoms (a hydrocarbon) containing only single bonds in a tree-like structure. Certain alkanes are used in gasoline, and it is important that they remain in liquid form--the temperature should not exceed their boiling point.</p>
-        <img src="https://www.softschools.com/chemistry/organic_chemistry/images/alkane_structure_and_bonding_1.png">
-        <p>Say you are the head of a gasoline manufacturing plant concerned about whether your fuel will remain effective in tropical countries. Without any chemistry knowledge, you can examine potential relationships to predict the boiling points of alkanes in your gasoline.</p>
-        
+        <h4>How do machine learning models work?</h4>
+        <p>At the manufacturing plant, you have now been tasked with determining the toxicity of certain fuels. The toxicity of certain substances depends on their lipophilicity. This is a measure of how well they can dissolve in fats or other nonpolar substances, which is associated with their ability to cross the cell membrane and potentially kill cells.</p>
+        <p>You'll be using a machine learning model to predict lipophilicity using a dataset of known values. At its simplest, this is a form of high-level regression.</p>
     </div>
 
     <div id="selectLR" class="mb-4" style="display:none;">
@@ -453,15 +447,7 @@ const config = {
     scales: {
       x: {
         type: 'linear',
-        position: 'bottom',
-        title: {
-            text: ""
-        }
-      },
-      y: {
-        title: {
-            text: "Boiling Point (°C)"
-        }
+        position: 'bottom'
       }
     }
   }

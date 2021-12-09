@@ -18,6 +18,9 @@ import tensorflow as tf
 #import tensorflow_probability as tfp
 from deepchem.molnet import load_delaney
 
+#/home/rketkar/.virtualenvs/myvirtualenv/
+#this is the virtual env path on python anywhere
+
 def train(dataset, split, inputModel, learningRate, dropout):
     tasks, datasets, transformers = load_delaney(featurizer="GraphConv", split=split)
     train_dataset, valid_dataset, test_dataset = datasets
