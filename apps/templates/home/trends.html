@@ -59,10 +59,10 @@
         <p>We will be using data about alkanes from <u><a href="https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html">https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html</a></u></p>
         <p>As the manager, you have access to various properties about different types of alkanes:</p>
         <ul>
-            <il># Carbon Atoms</il>
-            <il># Hydrogen Atoms</il>
-            <il>Molecular Weight</il>
-            <il>Density</il>
+            <il style="display: list-item;"># Carbon Atoms</il>
+            <il style="display: list-item;"># Hydrogen Atoms</il>
+            <il style="display: list-item;">Molecular Weight</il>
+            <il style="display: list-item;">Density</il>
         </ul>
         <p>However, you notice that you are missing boiling point data about certain alkanes. Your task is to use the rest of the data to estimate the missing information.</p>
         <div>
@@ -96,17 +96,8 @@
     <!--add js for this page-->
     <div id="compareVals" class="mb-4" style="display:none;">
         <h4>Compare your values</h4>
-        <p>Before applying your predicted values, you decide to confirm their accuracy using a table of boiling points.</p>
-        <label class="my-1 me-2" for="regressionField">Choose a value for the x-axis to calculate a regression equation</label>
-        <select class="form-select" id="regressionField" aria-label="Select dataset">
-            <option selected value="numC">Number of Carbon Atoms</option>
-            <option value="numH">Number of Hydrogen Atoms</option>
-            <option value="molWeight">Molecular Weight</option>
-            <option value="density">Density</option>
-        </select>
-        <p id="regEqn"></p>
-        <p id = "rSquared"></p>
-        <p>Note: The coefficient of determination represents how well the curve fits the data. A value of 1 is perfect.</p>
+        <p>Before applying your predicted values, you decide to confirm their accuracy using a table of boiling points. Heptane (C7H16), the missing alkane, has a boiling point of 126°C. How close were your predictions?</p>
+        <p>Continue on to <u><a href="/models.html">model building</a></u> to see a better way of determining data.</p>
     </div>
 
 
@@ -127,9 +118,6 @@
                   </li>
                   <li id="pg4" class="page-item">
                       <a class="page-link" href="#">4</a>
-                  </li>
-                  <li id="pg5" class="page-item">
-                      <a class="page-link" href="#">5</a>
                   </li>
                   <li class="page-item">
                       <a id="next" class="page-link" href="#">Next</a>
@@ -332,27 +320,25 @@ $("#trainButtonDropout").click(() => {
     });
 });
 
-const numCarbon = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-const numHydrogen = [4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42];
-const molWeight = [16.04,30.07,44.09,58.12,72.15,86.17,100.2,114.22,128.25,142.28,156.3,170.33,184.35,198.38,212.41,226.43,240.46,254.48,268.51,282.54];
-const boilPoint = [-162,-89,-42,-1,36,69,98,126,151,174,196,216,235,254,270,287,303,316,330,344];
-const density = [0, 0, 0.498,0.577,0.63,0.664,0.683,0.702,0.719,0.73,0.74,0.75,0.756,0.76,0.769,0.773,0.778,0.77728,0.785,0.789];
-
-//remove first 2 points for density
+const numCarbon = [/*1, 2,*/ 3, 4, 5, 6, /*7,*/ 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+const numHydrogen = [/*4,6*/,8,10,12,14,/*16*/,18,20,22,24,26,28,30,32,34,36,38,40,42];
+const molWeight = [/*16.04,30.07,*/44.09,58.12,72.15,86.17,/*100.2,*/114.22,128.25,142.28,156.3,170.33,184.35,198.38,212.41,226.43,240.46,254.48,268.51,282.54];
+const boilPoint = [/*-162,-89,*/-42,-1,36,69,/*98,*/126,151,174,196,216,235,254,270,287,303,316,330,344];
+const density = [/*0, 0,*/ 0.498,0.577,0.63,0.664,/*0.683,*/0.702,0.719,0.73,0.74,0.75,0.756,0.76,0.769,0.773,0.778,0.77728,0.785,0.789];
 
 $("#selectDatasetField").change(() => {
     switch (document.getElementById("selectDatasetField").value) {
         case "numC":
-            newAxis(numCarbon);
+            newAxis(numCarbon, "Number of Carbon Atoms");
             break;
         case "numH":
-            newAxis(numHydrogen);
+            newAxis(numHydrogen, "Number of Hydrogen Atoms");
             break;
         case "molWeight":
-            newAxis(molWeight);
+            newAxis(molWeight, "Molecular Weight (g/mol)");
             break;
         case "density":
-            newAxis(density);
+            newAxis(density, "Density (g/mL)");
             break;
         default:
             newAxis(numCarbon);
@@ -455,11 +441,13 @@ const config = {
         type: 'linear',
         position: 'bottom',
         title: {
-            text: ""
+            display: true,
+            text: "Number of Carbon Atoms"
         }
       },
       y: {
         title: {
+            display: true,
             text: "Boiling Point (°C)"
         }
       }
@@ -467,7 +455,9 @@ const config = {
   }
 };
 
-function newAxis(xArray) {
+function newAxis(xArray, title) {
+
+    myChart.options.scales.x.title.text = title;
     for(let i = 0; i < alkaneData.datasets[0].data.length; i++) {
         alkaneData.datasets[0].data[i].x = xArray[i];
     }
