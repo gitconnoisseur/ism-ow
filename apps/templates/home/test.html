@@ -47,7 +47,9 @@
     
     <div id="selectDataset" class="mb-4">
         <h4>How do models fit data?</h4>
-        <p>Most machine learning algorithms fit data by minizming a <i>loss function</i>. Mathematically, that means finding the parameters that will produce the least error, but we can think of it as getting a boulder to the bottom of a valley.</p>
+        <p>Most machine learning algorithms fit data by minimizing a <i>loss function</i>. Mathematically, that means finding the parameters that will produce the least error, but we can think of it as getting a boulder to the bottom of a valley. In this section, you will use a type of neural network known as a graph convolutional network (GCN). Don't stress—the model design is done for you so that you can focus on optimizing it using different factors.</p>
+        <img src="https://algorithmia.com/blog/wp-content/uploads/2018/04/word-image-4.png">
+        <p>Pictured above is a graph of a multidimensional loss function. Though slightly more complex, the principle is the same: locate the point closest to 0.</p>
         <p>You will continue to use the lipophilicity dataset and improve its perfomance. As a refresher, this can predict the types of substances likely to cross the cell membrane, which is significant for toxicity predictions.</p>
         <!--<ul>
             <<il>
@@ -94,12 +96,12 @@
 
     <div id="selectLR" class="mb-4" style="display:none;">
         <h4>Learning Rate</h4>
-        <p>We can control the speed of the boulder going down the hill. If it tumbles too quickly, it will bounce up to the other side. If it travels too slowly, it will take a long time to reach the bottom. This speed is controlled by a hyperparameter called <i>learning rate</i>.</p>
-        <p>Experiment with different learning rates and click the button to see which gives you the best performance—the closer the score is to 1, the better.</p>
+        <p>This first factor is akin to the speed of a boulder going down a hill. If it tumbles too quickly, it will bounce up to the other side. If it travels too slowly, it will take a long time to reach the bottom. We can control that speed with a hyperparameter called <i>learning rate</i>.</p>
+        <p>Experiment with using different learning rates to train a model below, and see which gives you the best performance—the closer the score is to 1, the better.</p>
         <img src="https://i.stack.imgur.com/KszUC.png">
-        <input type="range" name="amountRange" id="LRslider" min="0" max="0.1" step=0.001 value="0" onchange="this.nextElementSibling.value=this.value" />
+        <input type="range" name="amountRange" id="LRslider" min="1" max="100" step=1 value="64" onchange="this.nextElementSibling.value=this.value" />
 		<!--disallow typing in below input-->
-        <input type="number" name="amountInput" id="LRtext" min="0" max="0.1" step=0.001 value="0" onchange="this.previousElementSibling.value=this.value" />
+        <input type="number" name="amountInput" id="LRtext" min="1" max="100" step=1 value="64" onchange="this.previousElementSibling.value=this.value" />
         <button class="btn btn-primary" id="trainButtonLR" type="button">Train</button>
         <div class="loader" id="LRLoader" style="display: none;"></div>
         <p style="display: none;" id="showScoreLR">Score: </p> 
@@ -108,13 +110,22 @@
     <div id="selectDropout" class="mb-4" style="display:none;">
         <h4>Dropout</h4>
         <p>Although forgetting your keys can be a nuisance, forgetting things in general is very useful—imagine if you had to picture every place you'd ever parked while trying to find your car in a parking lot! Likewise, ML models benefit from forgetting connections they've made by getting rid of unnecessary learned information. This hyperparameter, the number of units of information discarded, is known as <i>dropout</i>.</p>
-        <p>Experiment with different dropout values and click the button to see which gives you the best performance—the closer the score is to 1, the better.</p>
+        <p>Experiment with different dropout values for a given model below, and see which gives you the best performance—the closer the score is to 1, the better.</p>
         <!--talk about overfitting? or regularization?-->
         <input type="range" name="amountRange" id="dropoutSlider" min="0" max="0.5" step=0.01 value="0" onchange="this.nextElementSibling.value=this.value" />
 		<input type="number" name="amountInput" id="dropoutText" min="0" max="0.5" step=0.01 value="0" onchange="this.previousElementSibling.value=this.value" />
         <button class="btn btn-primary" id="trainButtonDropout" type="button">Train</button>
         <div class="loader" id="dropoutLoader" style="display: none;"></div>
         <p style="display: none;" id="showScoreDropout">Score: </p> 
+    </div>
+
+    <div id="gridOpt" class="mb-4" style="display:none;">
+        <h4>Grid Optimization</h4>
+        <p>Now that you have data about two hyperparameters, you can find the optimal combination of both. If you arrange possible values for learning rate on the y-axis and possible values for dropout on the x-axis, then you can try various combinations together and find the optimal settings. More complicated machine learning models have more hyperparameters to tune, but they optimize them using the same principle of trying different combinations.</p>
+        <p>Below could be your two-way table. It uses a color scale to represent the best combinations--green entries represent a higher R^2 score, meaning the model fits the data better. We can see that for our situation, a smaller dropout and wider network layers work best. Now you have a better idea of what to set your hyperparameters to!</p>
+        <img style="margin-bottom: 2%; max-width: 60%;" src="/static/assets/img/grid_optimization.png">
+        <p>Congratulations on finishing this preview of machine learning! If you're interested, check out Google's <u><a href="https://developers.google.com/machine-learning/crash-course">Machine Learning Crash Course</a></u> to learn more!</p>
+        <!--link and underline above-->
     </div>
 
 
@@ -136,9 +147,9 @@
                   <li id="pg4" class="page-item">
                       <a class="page-link" href="#">4</a>
                   </li>
-                  <li id="pg5" class="page-item">
+                  <!-- <li id="pg5" class="page-item">
                       <a class="page-link" href="#">5</a>
-                  </li>
+                  </li> -->
                   <li class="page-item">
                       <a id="next" class="page-link" href="#">Next</a>
                   </li>
@@ -154,6 +165,7 @@
 <script>
 
 $(document).ready(function() {
+//learning rate is really graph conv layers
 let learningRate = parseFloat($("#LRslider").val());
 let dataset = "delaney";
 let split = "scaffold";
@@ -169,6 +181,7 @@ $("#pg1").click(() => {
     $("#pg5").removeClass("active");
     $("#selectLR").hide();
     $("#selectDropout").hide();
+    $("#gridOpt").hide();
     $("#selectDataset").show();
     pageNum = 1;
     $("#pg1").addClass("active");
@@ -181,6 +194,7 @@ $("#pg2").click(() => {
     $("#pg5").removeClass("active");
     $("#selectDropout").hide();
     $("#selectDataset").hide();
+    $("#gridOpt").hide();
     $("#selectLR").show();
     pageNum = 2;
     $("#pg2").addClass("active");
@@ -193,9 +207,23 @@ $("#pg3").click(() => {
     $("#pg5").removeClass("active");
     $("#selectDataset").hide();
     $("#selectLR").hide();
+    $("#gridOpt").hide();
     $("#selectDropout").show();
     pageNum = 3;
     $("#pg3").addClass("active");
+});
+
+$("#pg4").click(() => {
+    $("#pg1").removeClass("active");
+    $("#pg2").removeClass("active");
+    $("#pg3").removeClass("active");
+    $("#pg5").removeClass("active");
+    $("#selectDataset").hide();
+    $("#selectLR").hide();
+    $("#selectDropout").hide();
+    $("#gridOpt").show();
+    pageNum = 4;
+    $("#pg4").addClass("active");
 });
 
 $("#next").click(() => {
@@ -204,6 +232,7 @@ $("#next").click(() => {
             $("#pg1").removeClass("active");
             $("#selectDataset").hide();
             $("#selectDropout").hide();
+            $("#gridOpt").hide();
             $("#selectLR").show();
             pageNum = 2;
             $("#pg2").addClass("active");
@@ -212,10 +241,21 @@ $("#next").click(() => {
         case 2:
             $("#pg2").removeClass("active");
             $("#selectLR").hide();
+            $("#gridOpt").hide();
             $("#selectDataset").hide();
             $("#selectDropout").show();
             pageNum = 3;
             $("#pg3").addClass("active");
+            break;
+
+        case 3:
+            $("#pg3").removeClass("active");
+            $("#selectLR").hide();
+            $("#selectDataset").hide();
+            $("#selectDropout").hide();
+            $("#gridOpt").show();
+            pageNum = 4;
+            $("#pg4").addClass("active");
             break;
     
         default:
@@ -225,6 +265,7 @@ $("#next").click(() => {
             $("#pg5").removeClass("active");
             $("#selectLR").hide();
             $("#selectDropout").hide();
+            $("#gridOpt").hide();
             $("#selectDataset").show();
             pageNum = 1;
             $("#pg1").addClass("active");
@@ -251,6 +292,16 @@ $("#prev").click(() => {
             pageNum = 2;
             $("#pg2").addClass("active");
             break;
+
+        case 4:
+            $("#pg4").removeClass("active");
+            $("#selectDataset").hide();
+            $("#gridOpt").hide();
+            $("#selectLR").hide();
+            $("#selectDropout").show();
+            pageNum = 3;
+            $("#pg3").addClass("active");
+            break;
     
         default:
             $("#pg2").removeClass("active");
@@ -258,6 +309,7 @@ $("#prev").click(() => {
             $("#pg4").removeClass("active");
             $("#pg5").removeClass("active");
             $("#selectLR").hide();
+            $("#gridOpt").hide();
             $("#selectDropout").hide();
             $("#selectDataset").show();
             pageNum = 1;
@@ -266,8 +318,12 @@ $("#prev").click(() => {
     }
 });
 
-$("#selectDatasetField").change(() => {
-    dataset = $(this).val();
+$("#LRslider").change(() => {
+    learningRate = parseInt($("#LRslider").val());
+})
+
+$("#dropoutSlider").change(() => {
+    dropout = parseFloat($("#dropoutSlider").val());
 })
 
 $("#trainButtonLR").click(() => {
@@ -276,6 +332,7 @@ $("#trainButtonLR").click(() => {
     {
         dataset: dataset,
         split: split,
+        layers: learningRate
     }, (data) => {
         let score = data['score'];
         $("#LRLoader").hide();

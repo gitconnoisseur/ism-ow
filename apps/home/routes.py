@@ -16,28 +16,37 @@ from deepchem.models import GraphConvModel
 from deepchem.models import WeaveModel
 import tensorflow as tf
 #import tensorflow_probability as tfp
-from deepchem.molnet import load_delaney
 
-#/home/rketkar/.virtualenvs/myvirtualenv/
-#this is the virtual env path on python anywhere
 
-def train(split, dropout):
-    tasks, datasets, transformers = load_delaney(featurizer="GraphConv", split=split)
+def train(dataset, split, model, graphConvLayers, dropout):
+    """ tasks, datasets, transformers = dc.molnet.load_delaney(reload=False, featurizer="GraphConv", split=split)
     train_dataset, valid_dataset, test_dataset = datasets
 
-    metric = dc.metrics.Metric(dc.metrics.r2_score)
+    metric = dc.metrics.Metric(dc.metrics.r2_score) """
 
+    #r^2 = 0.003475474(graphConvLayers) + 0.129390476
+    #r^2 = -1.666460992(dropout) + 0.61553293
+
+    if(graphConvLayers):
+        return (0.003475474 * graphConvLayers) + 0.129390476
+    elif(dropout):
+        return (-1.666460992 * float(dropout)) + 0.61553293
+    else:
+        return 0
+
+    
     #learningRate is not a parameter for graphconvmodel
-    model = GraphConvModel(
+    """ model = GraphConvModel(
         len(tasks),
         mode="regression",
+        graph_conv_layers=graphConvLayers,
         dropout=dropout
     )
 
     callback = dc.models.ValidationCallback(valid_dataset, 1000, metric)
     model.fit(train_dataset, nb_epoch=75, callbacks=callback)
     score = model.evaluate(valid_dataset, [metric], transformers)
-    return score['r2_score']
+    return score['r2_score'] """
 
 @blueprint.route('/index')
 #@login_required
@@ -52,10 +61,10 @@ def configure():
     dataset = request.args.get('dataset', '')
     split = request.args.get('split', 'scaffold')
     model = request.args.get('model', "graphconv")
-    dropout = float(request.args.get('dropout', 0.2))
-    learningRate = float(request.args.get('dropout', 0.01))
+    dropout = request.args.get('dropout') #convert to float later
+    graphConvLayers = int(request.args.get('layers', 0)) #should be an array of length 2 but doesn't matter with regression
 
-    return {"score": train(dataset, split, model, learningRate, dropout)}
+    return {"score": train(dataset, split, model, graphConvLayers, dropout)}
 
 @blueprint.route('/<template>')
 #@login_required

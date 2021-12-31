@@ -46,25 +46,26 @@
   <div class="card card-body border-0 shadow table-wrapper table-responsive">
     
     <div id="selectDataset" class="mb-4">
-        <h4>How can we predict chemical properties?</h4>
-        <p>The simplest way to make predictions is to plot data about a given property and use a line/curve of best fit, one that follows the general shape of the data points.</p>
-        <p>For example, view the below relationship. An alkane is a molecule with only hydrogen and carbon atoms (a hydrocarbon) containing only single bonds in a tree-like structure. Certain alkanes are used in gasoline, and it is important that they remain in liquid form--the temperature should not exceed their boiling point.</p>
+        <h4>Welcome!</h4>
+        <p>Welcome to this preview of machine learning in computational chemistry. In this walkthrough, you will take on the role of a professional chemist to answer this question: How can we predict chemical properties? Prior knowledge is helpful, but not necessary, as you examine the following techniques. Enjoy!</p>
+        <p>To begin, the simplest way to make predictions is to plot data about a given property and use a line/curve of best fit, one that follows the general shape of the data points.</p>
+        <p>One useful chemistry tip: an alkane is a molecule with only hydrogen and carbon atoms (a hydrocarbon) arranged in a tree-like structure. Certain alkanes are used in gasoline, and it is important that they remain in liquid form--the temperature should not exceed their boiling point. The diagram below depicts pentane, a component of gasoline.</p>
         <img src="https://www.softschools.com/chemistry/organic_chemistry/images/alkane_structure_and_bonding_1.png">
-        <p>Say you are the head of a gasoline manufacturing plant concerned about whether your fuel will remain effective in tropical countries. Without any chemistry knowledge, you can examine potential relationships to predict the boiling points of alkanes in your gasoline.</p>
+        <p>Say you are the head of a gasoline manufacturing plant concerned about whether your fuel will remain effective in tropical countries. Even without any chemistry knowledge, you can examine potential relationships to predict the boiling points of alkanes in your gasoline.</p>
         
     </div>
 
     <div id="selectLR" class="mb-4" style="display:none;">
         <h4>Use a Line Graph</h4>
-        <p>We will be using data about alkanes from <u><a href="https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html">https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html</a></u></p>
+        <p>We will be using data about alkanes from <u><a href="https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html">this dataset</a></u>.</p>
         <p>As the manager, you have access to various properties about different types of alkanes:</p>
         <ul>
-            <il style="display: list-item;"># Carbon Atoms</il>
-            <il style="display: list-item;"># Hydrogen Atoms</il>
+            <il style="display: list-item;">Number of Carbon Atoms</il>
+            <il style="display: list-item;">Number of Hydrogen Atoms</il>
             <il style="display: list-item;">Molecular Weight</il>
             <il style="display: list-item;">Density</il>
         </ul>
-        <p>However, you notice that you are missing boiling point data about certain alkanes. Your task is to use the rest of the data to estimate the missing information.</p>
+        <p>However, you notice that you are missing boiling point data about heptane (C7H16), a crucial component of gasoline. Your task is to use the rest of the data to estimate the missing information.</p>
         <div>
             <canvas id="trends"></canvas>
         </div>
@@ -80,7 +81,7 @@
     <div id="selectDropout" class="mb-4" style="display:none;">
         <h4>Regression</h4>
         <p>Using a line graph for interpolation risks misjudging the data. Instead, we can use a computer to generate a curve of best fit. This is known as regression and will allow you to fill in missing values that best fit <i>all</i> of the data.</p>
-        <p>You may have noticed that multiple quantities (known as <i>features</i>) serve well as predictors. Now we can analyze these relationships mathematically by forming a quadratic regression equation.</p>
+        <p>You may have noticed that multiple quantities (known as <i>features</i>) serve well as predictors. Now we can analyze these relationships mathematically by forming a quadratic regression equation. Note: The coefficient of determination represents how well the curve fits the data. A value of 1 indicates a perfect fit.</p>
         <label class="my-1 me-2" for="regressionField">Choose a value for the x-axis to calculate a regression equation</label>
         <select class="form-select" id="regressionField" aria-label="Select dataset">
             <option selected value="numC">Number of Carbon Atoms</option>
@@ -88,16 +89,16 @@
             <option value="molWeight">Molecular Weight</option>
             <option value="density">Density</option>
         </select>
-        <p id="regEqn">boiling point = -0.9859(# carbon atoms)^2 + 45.1279(# carbon atoms) + -176.8114</p>
+        <p style="margin-top: 1rem;" id="regEqn">boiling point = -0.9859(# carbon atoms)^2 + 45.1279(# carbon atoms) + -176.8114</p>
         <p id = "rSquared">Coefficient of determination (R^2): 0.995</p>
-        <p>Note: The coefficient of determination represents how well the curve fits the data. A value of 1 is perfect.</p>
+        <p></p>
     </div>
 
-    <!--add js for this page-->
     <div id="compareVals" class="mb-4" style="display:none;">
         <h4>Compare your values</h4>
         <p>Before applying your predicted values, you decide to confirm their accuracy using a table of boiling points. Heptane (C7H16), the missing alkane, has a boiling point of 126°C. How close were your predictions?</p>
-        <p>Continue on to <u><a href="/models.html">model building</a></u> to see a better way of determining data.</p>
+        <img style="max-width: 20rem; margin-bottom: 1rem;" src="https://d32r1sh890xpii.cloudfront.net/news/1200x900/2021-11-19_4gmtcdqvo2.jpg">
+        <p>Continue on to <u><a href="/models.html">model building</a></u> to see a better way of predicting data.</p>
     </div>
 
 
@@ -227,6 +228,10 @@ $("#next").click(() => {
             pageNum = 4;
             $("#pg4").addClass("active");
             break;
+
+        case 4:
+            window.location = "/models.html";
+            break;
     
         default:
             $("#pg2").removeClass("active");
@@ -288,7 +293,7 @@ $("#prev").click(() => {
 });
 
 $("#selectDatasetField").change(() => {
-    dataset = $(this).val();
+    dataset = $("#selectDatasetField").val();
 })
 
 $("#trainButtonLR").click(() => {

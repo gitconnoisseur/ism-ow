@@ -43,66 +43,28 @@
   
   <div class="card card-body border-0 shadow table-wrapper table-responsive">
     <div id="selectDataset" class="mb-4">
-        <h4>How do machine learning models work?</h4>
+        <h4>How do machine learning models work? Where are they used?</h4>
         <p>At the manufacturing plant, you have now been tasked with determining the toxicity of certain fuels. The toxicity of certain substances depends on their lipophilicity. This is a measure of how well they can dissolve in fats or other nonpolar substances, which is associated with their ability to cross the cell membrane and potentially kill cells.</p>
-        <p>You'll be using a machine learning model to predict lipophilicity using a dataset of known values. At its simplest, this is a form of high-level regression.</p>
+        <p>You'll be using a machine learning model to predict lipophilicity using a dataset of known values. At its simplest, this is a form of high-level regression: drawing a line that best fits a dataset. Though this may seem simple, machine learning has many diverse applications. Can you think of how the companies below use ML in their products?</p>
+        <img src="https://d1.awsstatic.com/webteam/category-pages/Machine%20Learning/AI%20ML%20Customers.943db80195b6a3126f0df5282b8a85c67a4f5b93.png">
     </div>
 
     <div id="selectLR" class="mb-4" style="display:none;">
-        <h4>Use a Line Graph</h4>
-        <p>We will be using data about alkanes from <u><a href="https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html">https://www.engineeringtoolbox.com/hydrocarbon-boiling-melting-flash-autoignition-point-density-gravity-molweight-d_1966.html</a></u></p>
-        <p>As the manager, you have access to various properties about different types of alkanes:</p>
-        <ul>
-            <il># Carbon Atoms</il>
-            <il># Hydrogen Atoms</il>
-            <il>Molecular Weight</il>
-            <il>Density</il>
-        </ul>
-        <p>However, you notice that you are missing boiling point data about certain alkanes. Your task is to use the rest of the data to estimate the missing information.</p>
-        <div>
-            <canvas id="trends"></canvas>
-        </div>
-        <label class="my-1 me-2" for="selectDatasetField">Choose a different x-axis</label>
-        <select class="form-select" id="selectDatasetField" aria-label="Select dataset">
-            <option selected value="numC">Number of Carbon Atoms</option>
-            <option value="numH">Number of Hydrogen Atoms</option>
-            <option value="molWeight">Molecular Weight</option>
-            <option value="density">Density</option>
-        </select>
+        <h4>The Math</h4>
+        <p>Just like when you used a data plot, the goal is to minimize prediction error. Over many repeated trials, known as iterations, ML models adjust their predictions so that the total error is as small as possible.</p>
+        <p>What about when you have multiple factors that determine the output, like how molecular weight and density could both predict boiling point with varying degrees of accuracy? What makes ML models powerful is that they can consider multiple quantities at the same time.</p>
+        <img style="max-width: 15rem; margin-bottom: 1rem;" src="https://static.packt-cdn.com/products/9781789132212/graphics/7645d8e9-a560-4db6-bf10-a3985e081fa1.png">
+        <p>After each iteration, the weight (W) is adjusted using some calculus toward greater accuracy. Y represents the output, x represents the input, and b is bias, or a small factor of adjustment necessary for the model to work. Over thousands of iterations, and millions of data points, even this relatively simple process can generate powerful predictions.</p>
     </div>
 
     <div id="selectDropout" class="mb-4" style="display:none;">
-        <h4>Regression</h4>
-        <p>Using a line graph for interpolation risks misjudging the data. Instead, we can use a computer to generate a curve of best fit. This is known as regression and will allow you to fill in missing values that best fit <i>all</i> of the data.</p>
-        <p>You may have noticed that multiple quantities (known as <i>features</i>) serve well as predictors. Now we can analyze these relationships mathematically by forming a quadratic regression equation.</p>
-        <label class="my-1 me-2" for="regressionField">Choose a value for the x-axis to calculate a regression equation</label>
-        <select class="form-select" id="regressionField" aria-label="Select dataset">
-            <option selected value="numC">Number of Carbon Atoms</option>
-            <option value="numH">Number of Hydrogen Atoms</option>
-            <option value="molWeight">Molecular Weight</option>
-            <option value="density">Density</option>
-        </select>
-        <p id="regEqn">boiling point = -0.9859(# carbon atoms)^2 + 45.1279(# carbon atoms) + -176.8114</p>
-        <p id = "rSquared">Coefficient of determination (R^2): 0.995</p>
-        <p>Note: The coefficient of determination represents how well the curve fits the data. A value of 1 is perfect.</p>
+        <h4>Neural Networks</h4>
+        <p>One popular way to design high-performance machine learning models is using the human brain as a basis. Often termed "deep learning," this involves several layers, each with many nodes, to process input data and generate predictions. Each node is like a neuron and functions using the equation on the previous slide (y = wx + b).</p>
+        <p>However, since each node is connected to multiple others, there is a separate weight applied to each input. This means the equation looks more like this:</p>
+        <img src="/static/assets/img/ml_equation.png">
+        <p>Again, y = output, x = input, and b represents an adjustment term. Neural networks thus have several more layers of complexity, but by adjusting the w and x values for each node, they can eventually achieve remarkable performance. You may find them mimicking the human brain in applications like speech-to-text algorithms or even translators.</p>
+        <p>When you're ready, go on to <u><a href="/test.html">Hyperparameter Tuning</a></u> to see how neural networks can be optimized.</p>
     </div>
-
-    <!--add js for this page-->
-    <div id="compareVals" class="mb-4" style="display:none;">
-        <h4>Compare your values</h4>
-        <p>Before applying your predicted values, you decide to confirm their accuracy using a table of boiling points.</p>
-        <label class="my-1 me-2" for="regressionField">Choose a value for the x-axis to calculate a regression equation</label>
-        <select class="form-select" id="regressionField" aria-label="Select dataset">
-            <option selected value="numC">Number of Carbon Atoms</option>
-            <option value="numH">Number of Hydrogen Atoms</option>
-            <option value="molWeight">Molecular Weight</option>
-            <option value="density">Density</option>
-        </select>
-        <p id="regEqn"></p>
-        <p id = "rSquared"></p>
-        <p>Note: The coefficient of determination represents how well the curve fits the data. A value of 1 is perfect.</p>
-    </div>
-
 
       <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
           <nav aria-label="Page navigation example">
@@ -119,12 +81,12 @@
                   <li id="pg3" class="page-item">
                       <a class="page-link" href="#">3</a>
                   </li>
-                  <li id="pg4" class="page-item">
+                  <!-- <li id="pg4" class="page-item">
                       <a class="page-link" href="#">4</a>
                   </li>
                   <li id="pg5" class="page-item">
                       <a class="page-link" href="#">5</a>
-                  </li>
+                  </li> -->
                   <li class="page-item">
                       <a id="next" class="page-link" href="#">Next</a>
                   </li>
@@ -140,6 +102,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
 <script>
+/***
+ * add fun images to model.html
+*/
+/*
+1. use plot to predict
+2. use regression/ML
+3. compare to real data
+
+consider using colab
+
+ * for TDcommons, featurize smiles with deepchem and then use autogluon/another automl to do the rest
+steps to work on competition dataset:
+1. featurize
+2. try different models and find best one
+3. hyperparameter tuning
+4. boosting (ensemble)
+*/
 
 $(document).ready(function() {
 let learningRate = parseFloat($("#LRslider").val());
@@ -157,7 +136,6 @@ $("#pg1").click(() => {
     $("#pg5").removeClass("active");
     $("#selectLR").hide();
     $("#selectDropout").hide();
-    $("#compareVals").hide();
     $("#selectDataset").show();
     pageNum = 1;
     $("#pg1").addClass("active");
@@ -170,7 +148,6 @@ $("#pg2").click(() => {
     $("#pg5").removeClass("active");
     $("#selectDropout").hide();
     $("#selectDataset").hide();
-    $("#compareVals").hide();
     $("#selectLR").show();
     pageNum = 2;
     $("#pg2").addClass("active");
@@ -183,23 +160,9 @@ $("#pg3").click(() => {
     $("#pg5").removeClass("active");
     $("#selectDataset").hide();
     $("#selectLR").hide();
-    $("#compareVals").hide();
     $("#selectDropout").show();
     pageNum = 3;
     $("#pg3").addClass("active");
-});
-
-$("#pg4").click(() => {
-    $("#pg1").removeClass("active");
-    $("#pg2").removeClass("active");
-    $("#pg3").removeClass("active");
-    $("#pg5").removeClass("active");
-    $("#selectDataset").hide();
-    $("#selectLR").hide();
-    $("#selectDropout").hide();
-    $("#compareVals").show();
-    pageNum = 4;
-    $("#pg4").addClass("active");
 });
 
 $("#next").click(() => {
@@ -225,13 +188,7 @@ $("#next").click(() => {
             break;
 
         case 3:
-            $("#pg3").removeClass("active");
-            $("#selectLR").hide();
-            $("#selectDataset").hide();
-            $("#selectDropout").hide();
-            $("#compareVals").show();
-            pageNum = 4;
-            $("#pg4").addClass("active");
+            window.location = "/test.html";
             break;
     
         default:
@@ -268,16 +225,6 @@ $("#prev").click(() => {
             pageNum = 2;
             $("#pg2").addClass("active");
             break;
-        
-        case 4:
-            $("#pg4").removeClass("active");
-            $("#selectDataset").hide();
-            $("#selectLR").show();
-            $("compareVals").hide();
-            $("#selectDropout").show();
-            pageNum = 3;
-            $("#pg3").addClass("active");
-            break;
     
         default:
             $("#pg2").removeClass("active");
@@ -294,7 +241,7 @@ $("#prev").click(() => {
 });
 
 $("#selectDatasetField").change(() => {
-    dataset = $(this).val();
+    dataset = $("#selectDatasetField").val();
 })
 
 $("#trainButtonLR").click(() => {
@@ -326,145 +273,6 @@ $("#trainButtonDropout").click(() => {
     });
 });
 
-const numCarbon = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-const numHydrogen = [4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42];
-const molWeight = [16.04,30.07,44.09,58.12,72.15,86.17,100.2,114.22,128.25,142.28,156.3,170.33,184.35,198.38,212.41,226.43,240.46,254.48,268.51,282.54];
-const boilPoint = [-162,-89,-42,-1,36,69,98,126,151,174,196,216,235,254,270,287,303,316,330,344];
-const density = [0, 0, 0.498,0.577,0.63,0.664,0.683,0.702,0.719,0.73,0.74,0.75,0.756,0.76,0.769,0.773,0.778,0.77728,0.785,0.789];
-
-//remove first 2 points for density
-
-$("#selectDatasetField").change(() => {
-    switch (document.getElementById("selectDatasetField").value) {
-        case "numC":
-            newAxis(numCarbon);
-            break;
-        case "numH":
-            newAxis(numHydrogen);
-            break;
-        case "molWeight":
-            newAxis(molWeight);
-            break;
-        case "density":
-            newAxis(density);
-            break;
-        default:
-            newAxis(numCarbon);
-            break;
-    }
-});
-
-$("#regressionField").change(() => {
-    let a = 0;
-    let b = 0;
-    let c = 0;
-
-    let r2 = 0;
-    //ax^2 + bx + c
-
-    let xAxis;
-
-    switch (document.getElementById("regressionField").value) {
-        case "numC":
-            a = -.9859;
-            b = 45.1279;
-            c = -176.8114;
-            r2 = .995;
-            xAxis = "# carbon atoms";
-            break;
-        case "numH":
-            a = -.2465;
-            b = 23.5498;
-            c = -222.9252;
-            r2 = .995;
-            xAxis = "# hydrogen atoms";
-            break;
-        case "molWeight":
-            a = -.0050;
-            b = 3.2376;
-            c = -183.3156;
-            r2 = .995;
-            xAxis = "molecular weight";
-            break;
-        case "density":
-            a = 5293.2290;
-            b = -5576.4548;
-            c = 1435.1753;
-            r2 = .991;
-            xAxis = "density";
-            break;
-        default:
-            a = -.9859;
-            b = 45.1279;
-            c = -176.8114;
-            r2 = .995;
-            xAxis = "# carbon atoms";
-            break;
-    }
-
-    let eqnText = "boiling point = " + a + "(" + xAxis + ")^2 + " + b + "(" + xAxis + ") + " + c
-    $("#regEqn").text(eqnText);
-    $("#rSquared").text("Coefficient of determination (R^2): " + r2);
-});
-
-//add axis labels
-/*
-1. use plot to predict
-2. use regression/ML
-3. compare to real data
-
-add tab in between trends and hyperparams about model building
-
-consider using colab
-
-steps to work on competition dataset:
-1. featurize
-2. try different models and find best one
-3. hyperparameter tuning
-4. boosting (ensemble)
-*/
-
-let defaultData = [];
-for(let i = 0; i < numCarbon.length; i++) {
-    defaultData.push({
-        x: numCarbon[i],
-        y: boilPoint[i]
-    });
-}
-
-const alkaneData = {
-  datasets: [{
-    label: 'Alkanes',
-    data: defaultData,
-    backgroundColor: 'rgb(255, 99, 132)'
-  }],
-};
-
-const config = {
-  type: 'line',
-  data: alkaneData,
-  options: {
-    scales: {
-      x: {
-        type: 'linear',
-        position: 'bottom'
-      }
-    }
-  }
-};
-
-function newAxis(xArray) {
-    for(let i = 0; i < alkaneData.datasets[0].data.length; i++) {
-        alkaneData.datasets[0].data[i].x = xArray[i];
-    }
-
-    myChart.update();
-}
-
-const myChart = new Chart(
-    document.getElementById('trends'),
-    config
-);
 
 });
 
