@@ -10,11 +10,11 @@ from jinja2 import TemplateNotFound
 
 from markupsafe import escape
 
-import deepchem as dc
+""" import deepchem as dc
 import numpy as np
 from deepchem.models import GraphConvModel
 from deepchem.models import WeaveModel
-import tensorflow as tf
+import tensorflow as tf """
 #import tensorflow_probability as tfp
 
 

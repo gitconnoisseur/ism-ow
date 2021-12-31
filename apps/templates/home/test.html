@@ -122,7 +122,7 @@
     <div id="gridOpt" class="mb-4" style="display:none;">
         <h4>Grid Optimization</h4>
         <p>Now that you have data about two hyperparameters, you can find the optimal combination of both. If you arrange possible values for learning rate on the y-axis and possible values for dropout on the x-axis, then you can try various combinations together and find the optimal settings. More complicated machine learning models have more hyperparameters to tune, but they optimize them using the same principle of trying different combinations.</p>
-        <p>Below could be your two-way table. It uses a color scale to represent the best combinations--green entries represent a higher R^2 score, meaning the model fits the data better. We can see that for our situation, a smaller dropout and wider network layers work best. Now you have a better idea of what to set your hyperparameters to!</p>
+        <p>Below could be your two-way table. It uses a color scale to represent the best combinations--green entries represent a higher R^2 score, meaning the model fits the data better. We can see that for our situation, a smaller dropout and higher learning rate works best. Now you have a better idea of what to set your hyperparameters to!</p>
         <img style="margin-bottom: 2%; max-width: 60%;" src="/static/assets/img/grid_optimization.png">
         <p>Congratulations on finishing this preview of machine learning! If you're interested, check out Google's <u><a href="https://developers.google.com/machine-learning/crash-course">Machine Learning Crash Course</a></u> to learn more!</p>
         <!--link and underline above-->
@@ -257,7 +257,10 @@ $("#next").click(() => {
             pageNum = 4;
             $("#pg4").addClass("active");
             break;
-    
+        
+        case 4:
+        break;
+
         default:
             $("#pg2").removeClass("active");
             $("#pg3").removeClass("active");
